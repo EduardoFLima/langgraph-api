@@ -1,8 +1,8 @@
 from langchain.messages import AIMessage
 
+from src.domain.graph.graph_state import Scenario
+
 
 def identify_intent(state: dict):
 
-    ai_message = AIMessage("you got here ! good.")
-
-    return {"messages": state["messages"] + [ai_message]}
+    return {"scenario": Scenario.PATH_A}
