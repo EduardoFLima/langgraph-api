@@ -3,6 +3,7 @@ from langgraph.graph import END, START, StateGraph
 
 from src.domain.graph.graph_state import GraphState, Scenario
 from src.domain.graph.nodes.identify_intent_node import identify_intent
+from src.domain.ports.model_client_port import ModelClientPort
 
 
 def path_a(state: dict):
@@ -26,11 +27,11 @@ def path_condition(state: dict):
             return "path_failure"
 
 
-def create_graph():
+def get_graph_definition(model_client: ModelClientPort):
 
     agent_builder = StateGraph(GraphState)
 
-    agent_builder.add_node("identify_intent", identify_intent)
+    agent_builder.add_node("identify_intent", identify_intent(model_client))
     agent_builder.add_node("path_a", path_a)
     agent_builder.add_node("path_b", path_b)
 
