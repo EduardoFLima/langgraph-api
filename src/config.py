@@ -8,7 +8,7 @@ class Settings(BaseSettings):
 
     models: list[str] = [
         "meta-llama/llama-3.1-8b-instruct",
-        # "openai/gpt-oss-20b",
+        "openai/gpt-oss-20b",
         "nvidia/nemotron-3-super-120b-a12b:free"
         ]
 
