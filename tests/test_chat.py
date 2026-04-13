@@ -3,32 +3,26 @@ from src.main import app
 
 client = TestClient(app)
 
-def test_chat():
+def test_graph_going_through_path_a():
     response = client.post("/chat", json={"question": "how are u? I just want to go fast, first choice!"})
     assert response.status_code == 200
     assert response.json() is not None
 
-    answer = response.json().get("answer")
-    assert answer is not None
+    scenario = response.json().get("scenario")
+    assert scenario == "path_a_scenario"
 
-    assert "path_a" in answer
-
-def test_chat():
+def test_graph_going_through_path_b():
     response = client.post("/chat", json={"question": "Im looking for altenratives..."})
     assert response.status_code == 200
     assert response.json() is not None
 
-    answer = response.json().get("answer")
-    assert answer is not None
+    scenario = response.json().get("scenario")
+    assert scenario == "path_b_scenario"
 
-    assert "path_b" in answer
-
-def test_chat():
+def test_graph_going_through_path_unknown():
     response = client.post("/chat", json={"question": "I want to order food."})
     assert response.status_code == 200
     assert response.json() is not None
 
-    answer = response.json().get("answer")
-    assert answer is not None
-
-    assert "path_b" in answer
+    scenario = response.json().get("scenario")
+    assert scenario == "unknown_scenario"

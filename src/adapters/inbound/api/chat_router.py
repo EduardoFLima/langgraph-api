@@ -11,4 +11,7 @@ router = APIRouter()
 
 @router.post("/chat", response_model=ChatResponse)
 def receive_question(request: ChatRequest, service: ChatServiceDep):
-    return ChatResponse(answer=service.chat(request.question))
+    
+    chat_response = service.chat(request.question)
+
+    return ChatResponse(answer=chat_response.get("answer"), scenario=chat_response.get("scenario") )

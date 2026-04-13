@@ -9,11 +9,14 @@ class ChatService(ChatServicePort):
     def __init__(self, graph):
         self._graph = graph
 
-    def chat(self, question: str) -> str:
+    def chat(self, question: str) -> dict:
         messages = [HumanMessage(question)]
 
         result = self._graph.invoke({"messages": messages })
 
         last_message = result["messages"][-1].content
 
-        return last_message
+        return {
+            "answer": last_message,
+            "scenario": result.get("scenario")
+        }
