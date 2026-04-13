@@ -12,3 +12,13 @@ def test_chat():
     assert answer is not None
 
     assert "path_a" in answer
+
+def test_chat():
+    response = client.post("/chat", json={"question": "Im looking for altenratives..."})
+    assert response.status_code == 200
+    assert response.json() is not None
+
+    answer = response.json().get("answer")
+    assert answer is not None
+
+    assert "path_b" in answer

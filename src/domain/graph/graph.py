@@ -7,13 +7,15 @@ from src.domain.ports.model_client_port import ModelClientPort
 
 
 def path_a(state: dict):
-    ai_message = AIMessage("you got here in path_a ! good.")
+    ai_message = AIMessage("you got here in path_a !")
 
     return {"messages": [ai_message]}
 
 
 def path_b(state: dict):
-    return state
+    ai_message = AIMessage("you got here in path_b !")
+
+    return {"messages": [ai_message]}
 
 
 def path_condition(state: dict):
