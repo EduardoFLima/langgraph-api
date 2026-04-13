@@ -4,7 +4,7 @@ from src.main import app
 client = TestClient(app)
 
 def test_chat():
-    response = client.post("/chat", json={"question": "how are u?"})
+    response = client.post("/chat", json={"question": "how are u? I just want to go fast, first choice!"})
     assert response.status_code == 200
     assert response.json() is not None
 

@@ -1,5 +1,5 @@
 from langchain.agents import create_agent
-from langchain.messages import HumanMessage, SystemMessage
+from langchain.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
 from src.config import Settings
@@ -27,29 +27,47 @@ class OpenAPIClient(ModelClientPort):
             },
         )
 
-    def send_prompt(self, prompt):
+    def send_prompt(
+        self, system_prompt: str, user_prompt: str, response_format: type
+    ) -> dict:
 
-        agent = create_agent(model=self._client, tools=[])
+        agent = create_agent(
+            model=self._client, tools=[], response_format=response_format
+        )
 
-        system_prompt = SystemMessage("You are a helpful attendant.")
-        user_prompt = HumanMessage(prompt)
-
-        print("...caling the agent...")
+        print("\n\n...caling the agent...")
 
         try:
-            data = agent.invoke({"messages": [system_prompt, user_prompt]})
-
-            received_message = data["messages"][-1]
-            print(
-                "Open Router model used:",
-                received_message.response_metadata["model_name"],
+            data = agent.invoke(
+                {"messages": [SystemMessage(system_prompt), HumanMessage(user_prompt)]}
             )
 
-            answer = received_message.content
-            print("Open Router message:", answer)
+            last_ai_message = data["messages"][-2]
+
+            if last_ai_message is not None and isinstance(last_ai_message, AIMessage):
+                print(
+                    f"\nAnswer received. The model used was {last_ai_message.response_metadata["model_name"]}",
+                )
+
+            structured_response = data.get("structured_response")
+
+            if structured_response is not None:
+                path = structured_response.path
+                scenario = structured_response.scenario
+                
+                print("\n\n=> Answer:\n\n", structured_response)
+                
+                return {
+                    "path": path,
+                    "scenario": scenario,
+                }
+
 
         except Exception as e:
             answer = "An error occurred when calling the llm provider"
             print(f"{answer}:", e)
 
-        return answer
+        return {
+            "path": "unknown",
+            "scenario": scenario,
+        }
