@@ -55,8 +55,8 @@ class OpenAPIClient(ModelClientPort):
                 path = structured_response.path
                 scenario = structured_response.scenario
                 
-                print("\n\n=> Answer:\n\n", structured_response)
-                
+                print(f"\n\n=> Answer:\n\n{structured_response}\n")
+
                 return {
                     "path": path,
                     "scenario": scenario,
