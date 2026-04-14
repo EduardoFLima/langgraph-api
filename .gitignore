@@ -17,3 +17,6 @@ __pycache__/
 
 # OS files
 .DS_Store
+
+# langchain dev environment
+.langgraph_api

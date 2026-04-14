@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     openrouter_api_key: str
+    langsmith_api_key: str
 
     models: list[str] = [
         "meta-llama/llama-3.1-8b-instruct",
