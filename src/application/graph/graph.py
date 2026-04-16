@@ -1,9 +1,9 @@
 from langchain.messages import AIMessage
 from langgraph.graph import END, START, StateGraph
 
-from src.domain.graph.graph_state import GraphState, Scenario
-from src.domain.graph.nodes.identify_intent_node import identify_intent
-from src.domain.ports.model_client_port import ModelClientPort
+from src.application.graph.graph_state import GraphState, Scenario
+from src.application.graph.nodes.identify_intent_node import identify_intent
+from src.application.ports.model_client_port import ModelClientPort
 
 
 def path_a(state: dict):

@@ -3,10 +3,10 @@ from typing import Annotated
 
 from src.adapters.outbound.model_clients.open_api_client import OpenAPIClient
 from src.config import get_settings
-from src.domain.graph.factory import build_graph
-from src.domain.ports.chat_service_port import ChatServicePort
-from src.domain.ports.model_client_port import ModelClientPort
-from src.domain.services.chat_service import ChatService
+from src.application.graph.factory import build_graph
+from src.application.ports.chat_port import ChatServicePort
+from src.application.ports.model_client_port import ModelClientPort
+from src.application.use_cases.chat_use_case import ChatService
 
 from langgraph.graph.state import CompiledStateGraph
 

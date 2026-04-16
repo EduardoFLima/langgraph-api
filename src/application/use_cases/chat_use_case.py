@@ -1,7 +1,7 @@
 
 from langchain.messages import HumanMessage
 
-from src.domain.ports.chat_service_port import ChatServicePort
+from src.application.ports.chat_port import ChatServicePort
 
 
 class ChatService(ChatServicePort):

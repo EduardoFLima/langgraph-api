@@ -3,7 +3,7 @@ import json
 
 from pydantic import BaseModel, Field
 
-from src.domain.graph.graph_state import Scenario
+from src.application.graph.graph_state import Scenario
 
 
 class IntentSchema(BaseModel):

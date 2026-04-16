@@ -3,7 +3,7 @@ from langchain.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
 from src.config import Settings
-from src.domain.ports.model_client_port import ModelClientPort
+from src.application.ports.model_client_port import ModelClientPort
 
 
 class OpenAPIClient(ModelClientPort):

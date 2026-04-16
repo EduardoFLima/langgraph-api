@@ -1,7 +1,7 @@
 from langchain.messages import HumanMessage
 
-from src.domain.ports.model_client_port import ModelClientPort
-from src.domain.prompts.identify_ident_prompt import IntentSchema, get_system_prompt, wrap_user_prompt
+from src.application.ports.model_client_port import ModelClientPort
+from src.application.prompts.identify_ident_prompt import IntentSchema, get_system_prompt, wrap_user_prompt
 
 
 def identify_intent(model_client: ModelClientPort):
