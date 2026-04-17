@@ -7,7 +7,7 @@ from src.application.prompts.identify_ident_prompt import IntentSchema, get_syst
 def identify_intent(model_client: ModelClientPort):
     def identify_intent_node(state: dict):
         prompt = extract_prompt_from(state)
-        user_context = state["user_context"]
+        user_context = state["user_context"] if "user_context" in state else {}
 
         system_prompt = get_system_prompt(user_context.get("previous_scenario"))
         user_prompt = wrap_user_prompt(prompt)
