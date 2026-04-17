@@ -13,4 +13,5 @@ class Scenario(Enum):
 
 class GraphState(TypedDict):
     messages: Annotated[list[AnyMessage], operator.add]
+    user_context: dict
     scenario: Scenario

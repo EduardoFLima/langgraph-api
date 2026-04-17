@@ -7,8 +7,9 @@ from src.application.prompts.identify_ident_prompt import IntentSchema, get_syst
 def identify_intent(model_client: ModelClientPort):
     def identify_intent_node(state: dict):
         prompt = extract_prompt_from(state)
+        user_context = state["user_context"]
 
-        system_prompt = get_system_prompt()
+        system_prompt = get_system_prompt(user_context.get("previous_scenario"))
         user_prompt = wrap_user_prompt(prompt)
 
         structured_response = model_client.send_prompt(system_prompt, user_prompt, IntentSchema)

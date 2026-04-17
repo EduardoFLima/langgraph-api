@@ -11,26 +11,27 @@ class IntentSchema(BaseModel):
     scenario: Scenario = Field(description="Each path leads to a scenario")
 
 @lru_cache
-def get_system_prompt() -> str:
+def get_system_prompt(previous_path: str) -> str:
     system_prompt = {
-        "role": "You are a helpful attendant.",
-        "task": "Identify user intent and extract details on the path they want to go.",
+        "role": "You are a helpful attendant",
+        "task": "Identify user intent and extract details on the path they want to go",
         "rules": {
             "path_a": {
-                "description": "the path A.",
+                "description": "the path A",
                 "keywords": ["first path", "path a", "go left", "first choice"],
             },
             "path_b": {
-                "description": "the path B.",
+                "description": "the path B",
                 "keywords": ["second path", "path b", "go right", "alternative"],
             },
             "unknown": {
-                "description": "when the chosen path is unclear.",
+                "description": "when the chosen path is unclear",
             },
         },
+        "previous_path": previous_path,
         "extraction_instructions": {
-            "path": "Extract the user intent from its prompt.",
-            "scenario": "Extract the scenario according to the chosen path"
+            "path": "Extract the user intent from its prompt or from previous_path",
+            "scenario": "Extract the scenario according to the chosen path or from previous_path"
         },
         "examples": [
             {
