@@ -1,7 +1,7 @@
 from langgraph.checkpoint.postgres import PostgresSaver
 from langgraph.store.postgres import PostgresStore
 
-from src.application.ports.memory_port import MemoryPort
+from src.application.ports.outbound.memory_port import MemoryPort
 
 
 class PostgresMemory(MemoryPort):

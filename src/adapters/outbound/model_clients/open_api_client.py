@@ -2,8 +2,8 @@ from langchain.agents import create_agent
 from langchain.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
+from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.config import Settings
-from src.application.ports.model_client_port import ModelClientPort
 
 
 class OpenAPIClient(ModelClientPort):

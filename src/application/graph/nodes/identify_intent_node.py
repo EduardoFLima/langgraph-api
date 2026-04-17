@@ -1,6 +1,6 @@
 from langchain.messages import HumanMessage
 
-from src.application.ports.model_client_port import ModelClientPort
+from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.application.prompts.identify_ident_prompt import IntentSchema, get_system_prompt, wrap_user_prompt
 
 

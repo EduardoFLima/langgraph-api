@@ -1,14 +1,14 @@
 from fastapi import Depends
 from typing import Annotated
 
+from src.application.ports.inbound.chat_use_case import ChatUseCase
+from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.adapters.outbound.persistence.postgres_memory import PostgresMemory
-from src.application.ports.memory_port import MemoryPort
+from src.application.ports.outbound.memory_port import MemoryPort
 from src.adapters.outbound.model_clients.open_api_client import OpenAPIClient
 from src.config import get_settings
 from src.application.graph.factory import build_graph
-from src.application.ports.chat_port import ChatServicePort
-from src.application.ports.model_client_port import ModelClientPort
-from src.application.use_cases.chat_use_case import ChatService
+from src.application.services.chat_service import ChatService
 
 from langgraph.graph.state import CompiledStateGraph
 
@@ -28,8 +28,8 @@ def get_graph(
     return build_graph(model_client, memory_saver)
 
 
-def get_chat_service(graph=Depends(get_graph)) -> ChatServicePort:
+def get_chat_service(graph=Depends(get_graph)) -> ChatUseCase:
     return ChatService(graph)
 
 
-ChatServiceDep = Annotated[ChatServicePort, Depends(get_chat_service)]
+ChatServiceDep = Annotated[ChatUseCase, Depends(get_chat_service)]

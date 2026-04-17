@@ -3,7 +3,7 @@ from typing import Final
 
 NOT_IMPLEMENTED_ERROR_MSG: Final = "Method not implemented"
 
-class ChatServicePort(ABC):
+class ChatUseCase(ABC):
 
     @abstractmethod
     def chat(self, thread_id: str, prompt: str) -> dict:

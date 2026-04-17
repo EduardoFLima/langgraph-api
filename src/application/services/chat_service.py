@@ -1,9 +1,9 @@
 from langchain.messages import HumanMessage
 
-from src.application.ports.chat_port import ChatServicePort
+from src.application.ports.inbound.chat_use_case import ChatUseCase
 
 
-class ChatService(ChatServicePort):
+class ChatService(ChatUseCase):
 
     def __init__(self, graph):
         self._graph = graph
