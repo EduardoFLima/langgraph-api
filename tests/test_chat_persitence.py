@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from src.main import app
 
 
-class TestChatPersitence:
+class TestChatPersistence:
 
     @pytest.fixture()
     def client(self):
