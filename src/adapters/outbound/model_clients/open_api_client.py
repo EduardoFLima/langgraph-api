@@ -28,14 +28,15 @@ class OpenAPIClient(ModelClientPort):
         )
 
     def send_prompt(
-        self, system_prompt: str, user_prompt: str, response_format: type
+            self, system_prompt: str, user_prompt: str, response_format: type
     ) -> dict:
+        scenario = None
 
         agent = create_agent(
             model=self._client, tools=[], response_format=response_format
         )
 
-        print("\n\n...caling the agent...")
+        print("\n⌛...calling the agent...")
 
         try:
             data = agent.invoke(
@@ -46,7 +47,7 @@ class OpenAPIClient(ModelClientPort):
 
             if last_ai_message is not None and isinstance(last_ai_message, AIMessage):
                 print(
-                    f"\nAnswer received. The model used was {last_ai_message.response_metadata["model_name"]}",
+                    f"\nℹ️ Got a response. The model used was {last_ai_message.response_metadata["model_name"]}",
                 )
 
             structured_response = data.get("structured_response")
@@ -54,8 +55,6 @@ class OpenAPIClient(ModelClientPort):
             if structured_response is not None:
                 path = structured_response.path
                 scenario = structured_response.scenario
-                
-                print(f"\n\n=> Answer:\n\n{structured_response}\n")
 
                 return {
                     "path": path,

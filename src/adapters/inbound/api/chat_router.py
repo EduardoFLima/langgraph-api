@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Cookie
+from fastapi import APIRouter, Cookie, Response
 
 from src.adapters.inbound.api.schemas import (
     ChatRequest,
@@ -10,8 +10,12 @@ router = APIRouter()
 
 
 @router.post("/chat", response_model=ChatResponse)
-def receive_question(request: ChatRequest, service: ChatServiceDep, thread_id: str = Cookie(None)):
-    
+def receive_question(request: ChatRequest,
+                     response: Response,
+                     service: ChatServiceDep,
+                     thread_id: str = Cookie(None)):
     chat_response = service.chat(thread_id, request.question)
 
-    return ChatResponse(answer=chat_response.get("answer"), scenario=chat_response.get("scenario") )
+    response.set_cookie("thread_id", chat_response.get("thread_id"))
+
+    return ChatResponse(answer=chat_response.get("answer"), scenario=str(chat_response.get("scenario")))

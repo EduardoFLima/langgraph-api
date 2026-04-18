@@ -25,3 +25,27 @@ def test_graph_should_remember_previous_path(client):
 
     scenario = response.json().get("scenario")
     assert scenario == "path_a_scenario"
+
+def test_graph_should_keep_memory_when_thread_id_is_not_given(client):
+    # first call
+    response = client.post("/chat", json={"question": "how are u? Im skeptical, i want a second path!"})
+    assert response.status_code == 200
+
+    assert response.json() is not None
+    scenario = response.json().get("scenario")
+    assert scenario == "path_b_scenario"
+
+    assert response.cookies is not None
+    thread_id = response.cookies.get("thread_id")
+
+    # the second call should remember the path and return the thread id
+    client.cookies.set("thread_id", thread_id)
+    response = client.post("/chat", json={"question": "how are u? what path did I take? "})
+    assert response.status_code == 200
+    assert response.json() is not None
+
+    scenario = response.json().get("scenario")
+    assert scenario == "path_b_scenario"
+
+    assert response.cookies is not None
+    assert response.cookies.get("thread_id") == thread_id
