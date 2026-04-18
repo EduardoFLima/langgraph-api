@@ -5,7 +5,7 @@ from src.main import app
 
 class TestChatPaths:
 
-    @pytest.fixture(scope="module")
+    @pytest.fixture()
     def client(self):
         return TestClient(app)
 

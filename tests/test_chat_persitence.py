@@ -5,7 +5,7 @@ from src.main import app
 
 class TestChatPersitence:
 
-    @pytest.fixture(scope="module")
+    @pytest.fixture()
     def client(self):
         return TestClient(app)
 
