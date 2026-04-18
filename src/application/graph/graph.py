@@ -68,13 +68,14 @@ def path_condition(state: dict):
 def get_graph_definition(model_client: ModelClientPort, memory_saver: MemoryPort):
     agent_builder = StateGraph(GraphState)
 
-    agent_builder.add_node("load_memory", load_memory(memory_saver.get_store()))
+    # agent_builder.add_node("load_memory", load_memory(memory_saver.get_store()))
     agent_builder.add_node("identify_intent", identify_intent(model_client))
     agent_builder.add_node("path_a", path_a(memory_saver.get_store()))
     agent_builder.add_node("path_b", path_b(memory_saver.get_store()))
 
-    agent_builder.add_edge(START, "load_memory")
-    agent_builder.add_edge("load_memory", "identify_intent")
+    # agent_builder.add_edge(START, "load_memory")
+    # agent_builder.add_edge("load_memory", "identify_intent")
+    agent_builder.add_edge(START, "identify_intent")
     agent_builder.add_conditional_edges(
         "identify_intent",
         path_condition,

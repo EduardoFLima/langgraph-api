@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 from fastapi.testclient import TestClient
 from src.main import app
@@ -10,8 +12,9 @@ class TestChatPersistence:
         return TestClient(app)
 
     def test_graph_should_remember_previous_path(self, client):
+        thread_id = "test_graph_should_remember_previous_path" + str(datetime.now())
         # first call
-        client.cookies.set("thread_id", "test_graph_should_remember_previous_path")
+        client.cookies.set("thread_id", thread_id)
         response = client.post("/chat", json={"question": "how are u? I just want to go fast, first choice!"})
         assert response.status_code == 200
         assert response.json() is not None
@@ -20,8 +23,8 @@ class TestChatPersistence:
         assert scenario == "path_a_scenario"
 
         # the second call should remember the path
-        client.cookies.set("thread_id", "test_graph_should_remember_previous_path")
-        response = client.post("/chat", json={"question": "how are u? what path did I take?"})
+        client.cookies.set("thread_id", thread_id)
+        response = client.post("/chat", json={"question": "how are u? what path did I take previously?"})
         assert response.status_code == 200
         assert response.json() is not None
 

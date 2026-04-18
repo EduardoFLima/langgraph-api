@@ -30,7 +30,8 @@ class ChatService(ChatUseCase):
             {
                 "configurable": {
                     "thread_id": thread_id
-                }
+                },
+                "context": { "userId": "actualUserId" }
             }
         )
 

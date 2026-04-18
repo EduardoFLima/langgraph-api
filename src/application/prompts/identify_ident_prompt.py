@@ -59,9 +59,10 @@ def get_system_prompt(previous_path: str) -> str:
     return json.dumps(system_prompt)
 
 
-def wrap_user_prompt(prompt: str) -> str:
+def wrap_user_prompt(prompt: str, conversation_history: str) -> str:
     user_prompt = {
         "request": prompt,
+        "conversation_history": conversation_history,
         "instructions": [
             "Carefully analyze the question to determine the user intent",
             "Extract all relevant details only from the user prompt",

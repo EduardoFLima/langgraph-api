@@ -1,22 +1,32 @@
 from langchain.messages import HumanMessage
+from langgraph.runtime import Runtime
 
 from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.application.prompts.identify_ident_prompt import IntentSchema, get_system_prompt, wrap_user_prompt
 
 
-def identify_intent(model_client: ModelClientPort):
-    def identify_intent_node(state: dict):
-        prompt = extract_prompt_from(state)
-        user_context = state["user_context"] if "user_context" in state else {}
+def extract_conversation_history(messages) -> str:
+    if messages is None:
+        return ""
 
+    return str(messages[:-1])
+
+
+def identify_intent(model_client: ModelClientPort):
+    def identify_intent_node(state: dict, runtime: Runtime):
+        user_context = state["user_context"] if "user_context" in state else {}
         system_prompt = get_system_prompt(user_context.get("previous_scenario"))
-        user_prompt = wrap_user_prompt(prompt)
+
+        prompt = extract_prompt_from(state)
+        conversation_history = extract_conversation_history(state.get("messages"))
+        user_prompt = wrap_user_prompt(prompt, conversation_history)
 
         structured_response = model_client.send_prompt(system_prompt, user_prompt, IntentSchema)
 
         return {"scenario": structured_response["scenario"]}
 
     return identify_intent_node
+
 
 def extract_prompt_from(state):
     message = state["messages"][-1]
