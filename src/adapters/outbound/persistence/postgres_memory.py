@@ -6,8 +6,8 @@ from src.application.ports.outbound.memory_port import MemoryPort
 
 class PostgresMemory(MemoryPort):
 
-    def __init__(self, dbUri: str):
-        self._dbUri = dbUri
+    def __init__(self, db_uri: str):
+        self._db_uri = db_uri
 
         self._checkpointer = None
         self._store = None
@@ -24,11 +24,11 @@ class PostgresMemory(MemoryPort):
         return self._store
 
     def start(self):
-        self._checkpointer_context_manager = PostgresSaver.from_conn_string(self._dbUri)
+        self._checkpointer_context_manager = PostgresSaver.from_conn_string(self._db_uri)
         self._checkpointer = self._checkpointer_context_manager.__enter__()
         self._checkpointer.setup()
 
-        self._store_context_manager = PostgresStore.from_conn_string(self._dbUri)
+        self._store_context_manager = PostgresStore.from_conn_string(self._db_uri)
         self._store = self._store_context_manager.__enter__()
         self._store.setup()
 
