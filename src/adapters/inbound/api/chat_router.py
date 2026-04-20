@@ -18,4 +18,4 @@ def receive_question(request: ChatRequest,
 
     response.set_cookie("thread_id", chat_response.get("thread_id"))
 
-    return ChatResponse(answer=chat_response.get("answer"), scenario=str(chat_response.get("scenario")))
+    return ChatResponse(answer=chat_response.get("answer"), path=str(chat_response.get("path")))

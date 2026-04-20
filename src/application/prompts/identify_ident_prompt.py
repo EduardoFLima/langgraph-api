@@ -3,12 +3,11 @@ import json
 
 from pydantic import BaseModel, Field
 
-from src.application.graph.graph_state import Scenario
+from src.application.graph.graph_state import Path
 
 
 class IntentSchema(BaseModel):
-    path: str = Field(description="The chosen path")
-    scenario: Scenario = Field(description="Each path leads to a scenario")
+    path: Path = Field(description="the path taken")
 
 @lru_cache
 def get_system_prompt(previous_path: str) -> str:
@@ -31,27 +30,24 @@ def get_system_prompt(previous_path: str) -> str:
         "previous_path": previous_path,
         "extraction_instructions": {
             "path": "Extract the user intent from its prompt or from previous_path",
-            "scenario": "Extract the scenario according to the chosen path or from previous_path"
         },
         "examples": [
             {
                 "input": "I want the first path",
                 "output": {
-                    "path": "Path A",
-                    "scenario": "path_a_scenario"
+                    "path": "path_a"
                 },
             },
             {
                 "input": "I want some alternative path",
                 "output": {
-                    "path": "Path B",
-                    "scenario": "path_b_scenario"
+                    "path": "path_b"
                 },
             },
             {
                 "input": "How are you?",
                 "output": {
-                    "scenario": "unknown"
+                    "path": "unknown_path"
                 },
             },
         ],

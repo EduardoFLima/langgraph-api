@@ -19,8 +19,8 @@ class TestChatPersistence:
         assert response.status_code == 200
         assert response.json() is not None
 
-        scenario = response.json().get("scenario")
-        assert scenario == "path_a_scenario"
+        path = response.json().get("path")
+        assert path == "path_a"
 
         # the second call should remember the path
         client.cookies.set("thread_id", thread_id)
@@ -28,8 +28,8 @@ class TestChatPersistence:
         assert response.status_code == 200
         assert response.json() is not None
 
-        scenario = response.json().get("scenario")
-        assert scenario == "path_a_scenario"
+        path = response.json().get("path")
+        assert path == "path_a"
 
     def test_graph_should_keep_memory_when_thread_id_is_not_given(self, client):
         # first call
@@ -37,8 +37,8 @@ class TestChatPersistence:
         assert response.status_code == 200
 
         assert response.json() is not None
-        scenario = response.json().get("scenario")
-        assert scenario == "path_b_scenario"
+        path = response.json().get("path")
+        assert path == "path_b"
 
         assert response.cookies is not None
         thread_id = response.cookies.get("thread_id")
@@ -49,8 +49,8 @@ class TestChatPersistence:
         assert response.status_code == 200
         assert response.json() is not None
 
-        scenario = response.json().get("scenario")
-        assert scenario == "path_b_scenario"
+        path = response.json().get("path")
+        assert path == "path_b"
 
         assert response.cookies is not None
         assert response.cookies.get("thread_id") == thread_id

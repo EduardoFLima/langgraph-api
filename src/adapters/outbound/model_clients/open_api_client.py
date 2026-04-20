@@ -2,6 +2,7 @@ from langchain.agents import create_agent
 from langchain.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
+from src.application.graph.graph_state import Path
 from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.config import Settings
 
@@ -30,8 +31,6 @@ class OpenAPIClient(ModelClientPort):
     def send_prompt(
             self, system_prompt: str, user_prompt: str, response_format: type
     ) -> dict:
-        scenario = None
-
         agent = create_agent(
             model=self._client, tools=[], response_format=response_format
         )
@@ -54,11 +53,9 @@ class OpenAPIClient(ModelClientPort):
 
             if structured_response is not None:
                 path = structured_response.path
-                scenario = structured_response.scenario
 
                 return {
-                    "path": path,
-                    "scenario": scenario,
+                    "path": path
                 }
 
 
@@ -67,6 +64,5 @@ class OpenAPIClient(ModelClientPort):
             print(f"{answer}:", e)
 
         return {
-            "path": "unknown",
-            "scenario": scenario,
+            "path": Path.UNKNOWN,
         }

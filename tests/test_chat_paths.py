@@ -15,8 +15,8 @@ class TestChatPaths:
         assert response.cookies.get("thread_id") is not None
         assert response.json() is not None
 
-        scenario = response.json().get("scenario")
-        assert scenario == "path_a_scenario"
+        path = response.json().get("path")
+        assert path == "path_a"
 
     def test_graph_going_through_path_b(self, client):
         response = client.post("/chat", json={"question": "Im looking for altenratives..."})
@@ -24,8 +24,8 @@ class TestChatPaths:
         assert response.cookies.get("thread_id") is not None
         assert response.json() is not None
 
-        scenario = response.json().get("scenario")
-        assert scenario == "path_b_scenario"
+        path = response.json().get("path")
+        assert path == "path_b"
 
     def test_graph_going_through_path_unknown(self, client):
         response = client.post("/chat", json={"question": "I want to order food."})
@@ -33,5 +33,5 @@ class TestChatPaths:
         assert response.cookies.get("thread_id") is not None
         assert response.json() is not None
 
-        scenario = response.json().get("scenario")
-        assert scenario == "unknown_scenario"
+        path = response.json().get("path")
+        assert path == "unknown_path"

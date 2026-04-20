@@ -15,7 +15,7 @@ def extract_conversation_history(messages) -> str:
 def identify_intent(model_client: ModelClientPort):
     def identify_intent_node(state: dict, runtime: Runtime):
         user_context = state["user_context"] if "user_context" in state else {}
-        system_prompt = get_system_prompt(user_context.get("previous_scenario"))
+        system_prompt = get_system_prompt(user_context.get("previous_path"))
 
         prompt = extract_prompt_from(state)
         conversation_history = extract_conversation_history(state.get("messages"))
@@ -23,7 +23,7 @@ def identify_intent(model_client: ModelClientPort):
 
         structured_response = model_client.send_prompt(system_prompt, user_prompt, IntentSchema)
 
-        return {"scenario": structured_response["scenario"]}
+        return {"path": structured_response["path"]}
 
     return identify_intent_node
 

@@ -4,7 +4,7 @@ from langgraph.store.base import BaseStore
 
 from src.application.ports.outbound.memory_port import MemoryPort
 from src.application.ports.outbound.model_client_port import ModelClientPort
-from src.application.graph.graph_state import GraphState, Scenario
+from src.application.graph.graph_state import GraphState, Path
 from src.application.graph.nodes.identify_intent_node import identify_intent
 
 
@@ -18,7 +18,7 @@ def load_memory(store: BaseStore):
         if memory is None:
             return {}
 
-        return {"user_context": {"previous_scenario": memory.value["scenario"]}}
+        return {"user_context": {"previous_path": memory.value["path"]}}
 
     return load_memory_node
 
@@ -27,7 +27,7 @@ def path_a(store: BaseStore):
     def path_a_node(state: dict, config):
         ai_message = AIMessage("you got here in path_a !")
 
-        store_scenario(store, state, config)
+        store_path(store, state, config)
 
         return {"messages": [ai_message]}
 
@@ -37,29 +37,29 @@ def path_b(store: BaseStore):
     def path_b_node(state: dict, config):
         ai_message = AIMessage("you got here in path_b !")
 
-        store_scenario(store, state, config)
+        store_path(store, state, config)
 
         return {"messages": [ai_message]}
     return path_b_node
 
 
-def store_scenario(store: BaseStore, state, config):
+def store_path(store: BaseStore, state, config):
     thread_id = config["configurable"]["thread_id"]
-    scenario = state["scenario"]
+    path = state["path"]
 
     store.put(
         namespace=("preferences", "paths"),
         key=thread_id,
-        value={"scenario": scenario.value}
+        value={"path": path.value}
     )
 
 
 def path_condition(state: dict):
-    scenario = state["scenario"]
-    match scenario:
-        case Scenario.PATH_A:
+    path = state["path"]
+    match path:
+        case Path.PATH_A:
             return "path_a"
-        case Scenario.PATH_B:
+        case Path.PATH_B:
             return "path_b"
         case _:
             return "path_failure"

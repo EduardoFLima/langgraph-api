@@ -36,12 +36,12 @@ class ChatService(ChatUseCase):
         )
 
         last_message = result["messages"][-1].content
-        scenario = result.get("scenario").value
+        path = result.get("path").value
 
-        print("✅ The resulting scenario was:", scenario)
+        print("✅ The resulting path was:", path)
 
         return {
             "answer": last_message,
-            "scenario": scenario,
+            "path": path,
             "thread_id": thread_id
         }
