@@ -1,3 +1,5 @@
+from typing import Optional
+
 from fastapi import APIRouter, Cookie, Response
 
 from src.adapters.inbound.api.schemas import (
@@ -13,8 +15,9 @@ router = APIRouter()
 def receive_question(request: ChatRequest,
                      response: Response,
                      service: ChatServiceDep,
+                     user_id: Optional[str] = None,
                      thread_id: str = Cookie(None)):
-    chat_response = service.chat(thread_id, request.question)
+    chat_response = service.chat(thread_id, request.question, user_id)
 
     response.set_cookie("thread_id", chat_response.get("thread_id"))
 

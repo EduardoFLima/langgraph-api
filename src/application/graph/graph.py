@@ -9,16 +9,16 @@ from src.application.graph.nodes.identify_intent_node import identify_intent
 
 
 def load_memory(store: BaseStore):
-    def load_memory_node(state: dict, config):
-        thread_id = config["configurable"]["thread_id"]
-        memory = store.get(namespace=("preferences", "paths"), key=thread_id)
+    def load_memory_node(_, runtime):
+        user_id = runtime.context["user_id"] if runtime.context else None
+        memory = store.get(namespace=("preferences", "paths"), key=user_id) if user_id else None
 
-        print("loaded memory!", memory)
+        print("📀 Loaded memory!", memory)
 
         if memory is None:
             return {}
 
-        return {"user_context": {"previous_path": memory.value["path"]}}
+        return {"user_context": {"preferred_path": memory.value["preferred_path"]}}
 
     return load_memory_node
 
@@ -50,7 +50,7 @@ def store_path(store: BaseStore, state, config):
     store.put(
         namespace=("preferences", "paths"),
         key=thread_id,
-        value={"path": path.value}
+        value={"preferred_path": path.value}
     )
 
 
@@ -68,14 +68,13 @@ def path_condition(state: dict):
 def get_graph_definition(model_client: ModelClientPort, memory_saver: MemoryPort):
     agent_builder = StateGraph(GraphState)
 
-    # agent_builder.add_node("load_memory", load_memory(memory_saver.get_store()))
+    agent_builder.add_node("load_memory", load_memory(memory_saver.get_store()))
     agent_builder.add_node("identify_intent", identify_intent(model_client))
     agent_builder.add_node("path_a", path_a(memory_saver.get_store()))
     agent_builder.add_node("path_b", path_b(memory_saver.get_store()))
 
-    # agent_builder.add_edge(START, "load_memory")
-    # agent_builder.add_edge("load_memory", "identify_intent")
-    agent_builder.add_edge(START, "identify_intent")
+    agent_builder.add_edge(START, "load_memory")
+    agent_builder.add_edge("load_memory", "identify_intent")
     agent_builder.add_conditional_edges(
         "identify_intent",
         path_condition,

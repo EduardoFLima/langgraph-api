@@ -4,6 +4,7 @@ from langchain.messages import HumanMessage
 
 from src.application.ports.inbound.chat_use_case import ChatUseCase
 
+
 def resolve_thread_id(thread_id: str) -> str:
     if thread_id is None:
         thread_id = str(datetime.now())
@@ -18,7 +19,7 @@ class ChatService(ChatUseCase):
     def __init__(self, graph):
         self._graph = graph
 
-    def chat(self, thread_id: str, question: str) -> dict:
+    def chat(self, thread_id: str, question: str, user_id: str) -> dict:
         print(f"\n\n===== received a message =====\nmessage:{question}\n")
 
         messages = [HumanMessage(question)]
@@ -27,12 +28,12 @@ class ChatService(ChatUseCase):
 
         result = self._graph.invoke(
             {"messages": messages},
-            {
+            config={
                 "configurable": {
                     "thread_id": thread_id
                 },
-                "context": { "userId": "actualUserId" }
-            }
+            },
+            context={"user_id": user_id}
         )
 
         last_message = result["messages"][-1].content

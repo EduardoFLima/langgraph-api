@@ -10,7 +10,7 @@ class IntentSchema(BaseModel):
     path: Path = Field(description="the path taken")
 
 @lru_cache
-def get_system_prompt(previous_path: str) -> str:
+def get_system_prompt(user_context: str) -> str:
     system_prompt = {
         "role": "You are a helpful attendant",
         "task": "Identify user intent and extract details on the path they want to go",
@@ -27,9 +27,9 @@ def get_system_prompt(previous_path: str) -> str:
                 "description": "when the chosen path is unclear",
             },
         },
-        "previous_path": previous_path,
+        "user_context": user_context,
         "extraction_instructions": {
-            "path": "Extract the user intent from its prompt or from previous_path",
+            "path": "Extract the user intent from its prompt, conversation history or from user context",
         },
         "examples": [
             {
@@ -62,7 +62,7 @@ def wrap_user_prompt(prompt: str, conversation_history: str) -> str:
         "instructions": [
             "Carefully analyze the question to determine the user intent",
             "Extract all relevant details only from the user prompt",
-            "Return only the fields that are present in the request",
+            "Return only the fields that are present in the request or coming from user context",
             "Never infer or fabricate values"
         ],
     }

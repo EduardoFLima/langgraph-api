@@ -1,3 +1,5 @@
+import json
+
 from langchain.messages import HumanMessage
 from langgraph.runtime import Runtime
 
@@ -13,9 +15,9 @@ def extract_conversation_history(messages) -> str:
 
 
 def identify_intent(model_client: ModelClientPort):
-    def identify_intent_node(state: dict, runtime: Runtime):
-        user_context = state["user_context"] if "user_context" in state else {}
-        system_prompt = get_system_prompt(user_context.get("previous_path"))
+    def identify_intent_node(state: dict):
+        dumped_user_context = json.dumps(state["user_context"]) if state.get("user_context") else "None"
+        system_prompt = get_system_prompt(dumped_user_context)
 
         prompt = extract_prompt_from(state)
         conversation_history = extract_conversation_history(state.get("messages"))
