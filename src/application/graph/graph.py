@@ -21,14 +21,14 @@ def load_memory(_, runtime):
 
 
 
-def path_a(state: dict, runtime):
+def path_a(state, runtime):
     ai_message = AIMessage("you got here in path_a !")
 
     store_path(runtime, state)
 
     return {"messages": [ai_message]}
 
-def path_b(state: dict, runtime):
+def path_b(state, runtime):
     ai_message = AIMessage("you got here in path_b !")
 
     store_path(runtime, state)
