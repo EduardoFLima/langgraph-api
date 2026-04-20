@@ -24,32 +24,32 @@ def load_memory(store: BaseStore):
 
 
 def path_a(store: BaseStore):
-    def path_a_node(state: dict, config):
+    def path_a_node(state: dict, runtime):
         ai_message = AIMessage("you got here in path_a !")
 
-        store_path(store, state, config)
+        store_path(store, state, runtime)
 
         return {"messages": [ai_message]}
 
     return path_a_node
 
 def path_b(store: BaseStore):
-    def path_b_node(state: dict, config):
+    def path_b_node(state: dict, runtime):
         ai_message = AIMessage("you got here in path_b !")
 
-        store_path(store, state, config)
+        store_path(store, state, runtime)
 
         return {"messages": [ai_message]}
     return path_b_node
 
 
-def store_path(store: BaseStore, state, config):
-    thread_id = config["configurable"]["thread_id"]
+def store_path(store: BaseStore, state, runtime):
+    user_id = runtime.context["user_id"] if runtime.context else None
     path = state["path"]
 
     store.put(
         namespace=("preferences", "paths"),
-        key=thread_id,
+        key=user_id,
         value={"preferred_path": path.value}
     )
 
