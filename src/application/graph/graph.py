@@ -8,7 +8,7 @@ from src.application.graph.nodes.identify_intent_node import identify_intent
 
 
 def load_memory(_, runtime):
-    user_id = runtime.context["user_id"] if runtime.context else None
+    user_id = runtime.context["user_id"] if runtime.context.get("user_id") else None
     store = runtime.store if runtime.store else None
     memory = store.get(namespace=("preferences", "paths"), key=user_id) if user_id and store else None
 
@@ -35,6 +35,11 @@ def path_b(state, runtime):
 
     return {"messages": [ai_message]}
 
+def unknown_path(_):
+    ai_message = AIMessage("Apologies. Couldn't understand the path you want to take.")
+
+    return {"messages": [ai_message]}
+
 
 def store_path(runtime, state):
     user_id = runtime.context["user_id"] if runtime.context else None
@@ -55,7 +60,7 @@ def path_condition(state: dict):
         case Path.PATH_B:
             return "path_b"
         case _:
-            return "path_failure"
+            return "unknown_path"
 
 
 def get_graph_definition(model_client: ModelClientPort, memory_saver: MemoryPort):
@@ -65,16 +70,18 @@ def get_graph_definition(model_client: ModelClientPort, memory_saver: MemoryPort
     agent_builder.add_node("identify_intent", identify_intent(model_client))
     agent_builder.add_node("path_a", path_a)
     agent_builder.add_node("path_b", path_b)
+    agent_builder.add_node("unknown_path", unknown_path)
 
     agent_builder.add_edge(START, "load_memory")
     agent_builder.add_edge("load_memory", "identify_intent")
     agent_builder.add_conditional_edges(
         "identify_intent",
         path_condition,
-        {"path_a": "path_a", "path_b": "path_b", "path_failure": END},
+        {"path_a": "path_a", "path_b": "path_b", "unknown_path": "unknown_path"},
     )
     agent_builder.add_edge("path_a", END)
     agent_builder.add_edge("path_b", END)
+    agent_builder.add_edge("unknown_path", END)
 
     return agent_builder.compile(
         checkpointer=memory_saver.get_checkpointer(),
