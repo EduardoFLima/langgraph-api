@@ -1,24 +1,11 @@
 from langchain.messages import AIMessage
 from langgraph.graph import END, START, StateGraph
 
+from src.application.graph.nodes.load_memory_node import load_memory
 from src.application.graph.graph_state import GraphState, Path
 from src.application.graph.nodes.identify_intent_node import identify_intent
 from src.application.ports.outbound.memory_port import MemoryPort
 from src.application.ports.outbound.model_client_port import ModelClientPort
-
-
-def load_memory(_, runtime):
-    user_id = runtime.context["user_id"] if runtime.context.get("user_id") else None
-    store = runtime.store if runtime.store else None
-    memory = store.get(namespace=("preferences", "paths"), key=user_id) if user_id and store else None
-
-    print("📀 Loaded memory!", memory)
-
-    if memory is None:
-        return {}
-
-    return {"user_context": {"preferred_path": memory.value["preferred_path"]}}
-
 
 
 def path_a(state, runtime):
