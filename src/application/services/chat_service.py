@@ -36,13 +36,15 @@ class ChatService(ChatUseCase):
             context={"user_id": user_id}
         )
 
-        last_message = result["messages"][-1].content
+        messages_as_str: list[str] = [message.content for message in result["messages"]]
+
         path = result.get("path").value
 
         print("✅ The resulting path was:", path)
 
         return {
-            "answer": last_message,
+            "messages": messages_as_str,
+            "answer": messages_as_str[-1],
             "path": path,
-            "thread_id": thread_id
+            "thread_id": thread_id,
         }

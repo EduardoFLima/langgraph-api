@@ -10,3 +10,4 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     answer: str
     path: str
+    messages: list[str]

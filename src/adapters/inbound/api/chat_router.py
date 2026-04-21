@@ -21,4 +21,8 @@ def receive_question(request: ChatRequest,
 
     response.set_cookie("thread_id", chat_response.get("thread_id"))
 
-    return ChatResponse(answer=chat_response.get("answer"), path=str(chat_response.get("path")))
+    return ChatResponse(
+        messages=chat_response.get("messages"),
+        answer=chat_response.get("answer"),
+        path=str(chat_response.get("path"))
+    )
