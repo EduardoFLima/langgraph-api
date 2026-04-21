@@ -26,7 +26,7 @@ class Settings(BaseSettings):
 
     http_referer: str = "some.web.site"
     x_title: str = "Testing chat agent"
-    provider: dict = dict(sort=dict(by="price", partition="none"))
+    provider: dict = dict(sort=dict(by="throughput", partition="none"))
     temperature: float = 0.2
 
     memory: PostgresSettings = PostgresSettings()
