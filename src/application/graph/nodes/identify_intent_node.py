@@ -1,7 +1,6 @@
 import json
 
 from langchain.messages import HumanMessage
-from langgraph.runtime import Runtime
 
 from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.application.prompts.identify_ident_prompt import IntentSchema, get_system_prompt, wrap_user_prompt
