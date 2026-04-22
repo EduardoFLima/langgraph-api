@@ -36,15 +36,18 @@ class ChatService(ChatUseCase):
             context={"user_id": user_id}
         )
 
-        messages_as_str: list[str] = [message.content for message in result["messages"]]
+        formatted_messages: list[str] = [
+            ("User: " if isinstance(message, HumanMessage) else "AI: ") + message.content
+            for message in result["messages"]
+        ]
 
         path = result.get("path").value
 
         print("✅ The resulting path was:", path)
 
         return {
-            "messages": messages_as_str,
-            "answer": messages_as_str[-1],
+            "messages": formatted_messages,
+            "answer": formatted_messages[-1],
             "path": path,
             "thread_id": thread_id,
         }

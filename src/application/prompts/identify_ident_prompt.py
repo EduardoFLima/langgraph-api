@@ -3,7 +3,7 @@ from functools import lru_cache
 
 from pydantic import BaseModel, Field
 
-from src.application.graph.graph_state import Path
+from src.application.graph.state import Path
 
 
 class IntentSchema(BaseModel):

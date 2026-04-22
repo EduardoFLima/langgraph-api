@@ -1,16 +1,8 @@
 import json
 
-from langchain.messages import HumanMessage
-
+from src.application.graph.message_extractor import extract_prompt_from, extract_conversation_history
 from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.application.prompts.identify_ident_prompt import IntentSchema, get_system_prompt, wrap_user_prompt
-
-
-def extract_conversation_history(messages) -> str:
-    if messages is None:
-        return ""
-
-    return str(messages[:-1])
 
 
 def identify_intent(model_client: ModelClientPort):
@@ -27,20 +19,3 @@ def identify_intent(model_client: ModelClientPort):
         return {"path": structured_response["path"]}
 
     return identify_intent_node
-
-
-def extract_prompt_from(state):
-    message = state["messages"][-1]
-
-    # Handle messages coming from chats service
-    if isinstance(message, HumanMessage):
-        prompt = message.content
-    else:
-        content = message.get("content")
-        # Handle messages coming from langsmith studio's chat
-        if isinstance(content, list):
-            prompt = message["content"][0]["text"]
-        else:
-            # Handle messages coming from langsmith studio's graph
-            prompt = message["content"]
-    return prompt

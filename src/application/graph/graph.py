@@ -1,9 +1,10 @@
 from langchain.messages import AIMessage
 from langgraph.graph import END, START, StateGraph
 
-from src.application.graph.nodes.load_memory_node import load_memory
-from src.application.graph.graph_state import GraphState, Path
 from src.application.graph.nodes.identify_intent_node import identify_intent
+from src.application.graph.nodes.load_memory_node import load_memory
+from src.application.graph.nodes.summarize_node import summarize
+from src.application.graph.state import State, Path
 from src.application.ports.outbound.memory_port import MemoryPort
 from src.application.ports.outbound.model_client_port import ModelClientPort
 
@@ -15,12 +16,14 @@ def path_a(state, runtime):
 
     return {"messages": [ai_message]}
 
+
 def path_b(state, runtime):
     ai_message = AIMessage("you got here in path_b !")
 
     store_path(runtime, state)
 
     return {"messages": [ai_message]}
+
 
 def unknown_path(_):
     ai_message = AIMessage("Apologies. Couldn't understand the path you want to take.")
@@ -51,13 +54,14 @@ def path_condition(state: dict):
 
 
 def get_graph_definition(model_client: ModelClientPort, memory_saver: MemoryPort):
-    agent_builder = StateGraph(GraphState)
+    agent_builder = StateGraph(State)
 
     agent_builder.add_node("load_memory", load_memory)
     agent_builder.add_node("identify_intent", identify_intent(model_client))
     agent_builder.add_node("path_a", path_a)
     agent_builder.add_node("path_b", path_b)
     agent_builder.add_node("unknown_path", unknown_path)
+    agent_builder.add_node("summarize", summarize(model_client))
 
     agent_builder.add_edge(START, "load_memory")
     agent_builder.add_edge("load_memory", "identify_intent")
@@ -66,9 +70,10 @@ def get_graph_definition(model_client: ModelClientPort, memory_saver: MemoryPort
         path_condition,
         {"path_a": "path_a", "path_b": "path_b", "unknown_path": "unknown_path"},
     )
-    agent_builder.add_edge("path_a", END)
-    agent_builder.add_edge("path_b", END)
-    agent_builder.add_edge("unknown_path", END)
+    agent_builder.add_edge("path_a", "summarize")
+    agent_builder.add_edge("path_b", "summarize")
+    agent_builder.add_edge("unknown_path", "summarize")
+    agent_builder.add_edge("summarize", END)
 
     return agent_builder.compile(
         checkpointer=memory_saver.get_checkpointer(),

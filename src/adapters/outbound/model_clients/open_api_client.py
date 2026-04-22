@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from langchain.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
-from src.application.graph.graph_state import Path
+from src.application.graph.state import Path
 from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.config import Settings
 
