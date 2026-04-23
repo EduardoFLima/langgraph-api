@@ -1,11 +1,13 @@
+from typing import TypeVar
+
 from langchain.agents import create_agent
 from langchain.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 
-from src.application.graph.state import Path
 from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.config import Settings
 
+T = TypeVar("T")
 
 class OpenAPIClient(ModelClientPort):
 
@@ -29,8 +31,8 @@ class OpenAPIClient(ModelClientPort):
         )
 
     def send_prompt(
-            self, system_prompt: str, user_prompt: str, response_format: type
-    ) -> dict:
+            self, system_prompt: str, user_prompt: str, response_format: type[T]
+    ) -> T:
         agent = create_agent(
             model=self._client, tools=[], response_format=response_format
         )
@@ -52,17 +54,11 @@ class OpenAPIClient(ModelClientPort):
             structured_response = data.get("structured_response")
 
             if structured_response is not None:
-                path = structured_response.path
-
-                return {
-                    "path": path
-                }
+                return structured_response
 
 
         except Exception as e:
             answer = "An error occurred when calling the llm provider"
             print(f"{answer}:", e)
 
-        return {
-            "path": Path.UNKNOWN,
-        }
+        return None

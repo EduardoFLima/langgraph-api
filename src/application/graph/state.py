@@ -12,3 +12,4 @@ class Path(Enum):
 class State(MessagesState):
     user_context: dict
     path: Path
+    preferred_path: Path

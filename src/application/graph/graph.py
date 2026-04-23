@@ -10,11 +10,11 @@ from src.application.ports.outbound.model_client_port import ModelClientPort
 
 
 def path_a(_):
-    return {"messages": [AIMessage("you got here in path_a !")]}
+    return {"messages": [AIMessage("You will take the path_a !")]}
 
 
 def path_b(_):
-    return {"messages": [AIMessage("you got here in path_b !")]}
+    return {"messages": [AIMessage("You will take the path_b !")]}
 
 
 def unknown_path(_):

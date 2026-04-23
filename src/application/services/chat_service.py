@@ -42,12 +42,15 @@ class ChatService(ChatUseCase):
         ]
 
         path = result.get("path").value
+        preferred_path = result.get("preferred_path").value
 
         print("✅ The resulting path was:", path)
+        print("✅ The resulting preferred_path was:", preferred_path)
 
         return {
             "messages": formatted_messages,
             "answer": formatted_messages[-1],
             "path": path,
+            "preferred_path": preferred_path,
             "thread_id": thread_id,
         }
