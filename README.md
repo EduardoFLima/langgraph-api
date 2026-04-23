@@ -106,6 +106,22 @@ This repository follows a **hexagonal architecture** (also known as ports-and-ad
 
 The graph is defined with `StateGraph(State)` and has this flow:
 
+```mermaid
+flowchart TD
+    START([START]) --> load_memory[load_memory]
+    load_memory --> identify_intent[identify_intent]
+
+    identify_intent -->|Path.PATH_A| path_a[path_a]
+    identify_intent -->|Path.PATH_B| path_b[path_b]
+    identify_intent -->|fallback| unknown_path[unknown_path]
+
+    path_a --> summarize[summarize]
+    path_b --> summarize
+    unknown_path --> summarize
+
+    summarize --> END([END])
+```
+
 1. `START -> load_memory`
 2. `load_memory -> identify_intent`
 3. Conditional branch from `identify_intent`:
