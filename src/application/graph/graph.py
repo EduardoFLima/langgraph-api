@@ -9,37 +9,16 @@ from src.application.ports.outbound.memory_port import MemoryPort
 from src.application.ports.outbound.model_client_port import ModelClientPort
 
 
-def path_a(state, runtime):
-    ai_message = AIMessage("you got here in path_a !")
-
-    store_path(runtime, state)
-
-    return {"messages": [ai_message]}
+def path_a(_):
+    return {"messages": [AIMessage("you got here in path_a !")]}
 
 
-def path_b(state, runtime):
-    ai_message = AIMessage("you got here in path_b !")
-
-    store_path(runtime, state)
-
-    return {"messages": [ai_message]}
+def path_b(_):
+    return {"messages": [AIMessage("you got here in path_b !")]}
 
 
 def unknown_path(_):
-    ai_message = AIMessage("Apologies. Couldn't understand the path you want to take.")
-
-    return {"messages": [ai_message]}
-
-
-def store_path(runtime, state):
-    user_id = runtime.context["user_id"] if runtime.context else None
-    path = state["path"]
-
-    runtime.store.put(
-        namespace=("preferences", "paths"),
-        key=user_id,
-        value={"preferred_path": path.value}
-    )
+    return {"messages": [AIMessage("Apologies. Couldn't understand the path you want to take.")]}
 
 
 def path_condition(state: dict):
