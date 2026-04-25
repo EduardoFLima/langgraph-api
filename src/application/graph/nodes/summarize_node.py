@@ -16,16 +16,12 @@ def summarize(model_client: ModelClientPort):
         user_prompt = wrap_user_prompt(conversation_history)
 
         structured_response = model_client.send_prompt(system_prompt, user_prompt, SummarizeSchema)
-        preferred_path = structured_response.preferred_path
+        preferred_path = structured_response.preferred_path if structured_response else None
 
         shrunk_messages = messages[-6:]
 
         user_id = runtime.context["user_id"] if runtime.context else None
-        runtime.store.put(
-            namespace=("preferences", "paths"),
-            key=user_id,
-            value={"preferred_path": preferred_path.value}
-        )
+        runtime.store.save_preferred_path(user_id, preferred_path.value) if user_id and preferred_path else None
 
         return {
             "messages": [

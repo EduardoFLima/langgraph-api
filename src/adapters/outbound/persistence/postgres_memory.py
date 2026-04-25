@@ -1,6 +1,6 @@
 from langgraph.checkpoint.postgres import PostgresSaver
-from langgraph.store.postgres import PostgresStore
 
+from src.adapters.outbound.persistence.postgres_repository import PostgresStoreRepository
 from src.application.ports.outbound.memory_port import MemoryPort
 
 
@@ -28,7 +28,7 @@ class PostgresMemory(MemoryPort):
         self._checkpointer = self._checkpointer_context_manager.__enter__()
         self._checkpointer.setup()
 
-        self._store_context_manager = PostgresStore.from_conn_string(self._db_uri)
+        self._store_context_manager = PostgresStoreRepository.from_conn_string(self._db_uri)
         self._store = self._store_context_manager.__enter__()
         self._store.setup()
 
