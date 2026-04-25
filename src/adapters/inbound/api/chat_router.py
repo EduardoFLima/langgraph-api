@@ -17,7 +17,7 @@ def receive_question(request: ChatRequest,
                      service: ChatServiceDep,
                      user_id: Optional[str] = None,
                      thread_id: str = Cookie(None)):
-    chat_response = service.chat(thread_id, request.question, user_id)
+    chat_response = service.chat(thread_id, request.prompt, user_id)
 
     response.set_cookie("thread_id", chat_response.get("thread_id"))
 

@@ -8,7 +8,7 @@ from src.main import app
 
 
 def send_message_to_chat(client: TestClient, user_id, message: str) -> Response:
-    response = client.post(f"/chat?user_id={user_id}", json={"question": message})
+    response = client.post(f"/chat?user_id={user_id}", json={"prompt": message})
 
     assert response.status_code == 200
     assert response.json() is not None

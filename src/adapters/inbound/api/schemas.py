@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class ChatRequest(BaseModel):
-    question: str
+    prompt: str
 
 
 class ChatResponse(BaseModel):
