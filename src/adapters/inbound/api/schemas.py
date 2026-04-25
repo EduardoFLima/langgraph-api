@@ -9,4 +9,4 @@ class ChatResponse(BaseModel):
     answer: str
     path: str
     preferred_path: str
-    messages: list[str]
+    messages: list[str] | None = None
