@@ -12,7 +12,7 @@ class IntentSchema(BaseModel):
 @lru_cache
 def get_system_prompt(user_context: str) -> str:
     system_prompt = {
-        "role": "You are a helpful attendant",
+        "role": "A helpful attendant which supports the user to take their path.",
         "task": "Identify user intent and extract details on the path they want to go",
         "rules": {
             "path_a": {
