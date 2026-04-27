@@ -1,3 +1,4 @@
+import json
 from typing import TypeVar
 
 from langchain.agents import create_agent
@@ -9,14 +10,21 @@ from src.config import Settings
 
 T = TypeVar("T")
 
+
 class OpenAPIClient(ModelClientPort):
 
     def __init__(self, settings: Settings):
         self._settings = settings
 
-        self._client = ChatOpenAI(
+        self._client = self._instantiate_new_model(self._settings.models)
+        self._safeguard_client = self._instantiate_new_model(
+            [self._settings.safeguard_model]
+        )
+
+    def _instantiate_new_model(self, models):
+        return ChatOpenAI(
             api_key=self._settings.openrouter_api_key,
-            model=self._settings.models[0],
+            model=models[0],
             temperature=self._settings.temperature,
             base_url="https://openrouter.ai/api/v1",
             default_headers={
@@ -25,13 +33,13 @@ class OpenAPIClient(ModelClientPort):
             },
             extra_body={
                 "order": "arcee-ai",
-                "models": self._settings.models,
+                "models": models,
                 "provider": self._settings.provider,
             },
         )
 
     def send_prompt(
-            self, system_prompt: str, user_prompt: str, response_format: type[T]
+        self, system_prompt: str, user_prompt: str, response_format: type[T]
     ) -> T:
         agent = create_agent(
             model=self._client, tools=[], response_format=response_format
@@ -56,9 +64,30 @@ class OpenAPIClient(ModelClientPort):
             if structured_response is not None:
                 return structured_response
 
-
         except Exception as e:
             answer = "An error occurred when calling the llm provider"
             print(f"{answer}:", e)
 
         return None
+
+    def safeguard_check(self, safeguard_prompt: str, response_format: type[T]) -> dict:
+
+        print("\n🛡️...calling the safeguard agent...")
+
+        data = self._safeguard_client.invoke(
+            [
+                {
+                    "role": "user",
+                    "content": safeguard_prompt,
+                }
+            ],
+            response_format=response_format,
+        )
+
+        model = data.response_metadata["model_name"] if data.response_metadata else None
+
+        print(
+            f"\nℹ️ Got a response. The model used was {model}."
+        )
+
+        return json.loads(data.text)

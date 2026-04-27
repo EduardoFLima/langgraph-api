@@ -23,6 +23,7 @@ class Settings(BaseSettings):
         "openai/gpt-oss-20b",
         "nvidia/nemotron-3-super-120b-a12b:free"
     ]
+    safeguard_model: str = "openai/gpt-oss-safeguard-20b"
 
     http_referer: str = "some.web.site"
     x_title: str = "Testing chat agent"

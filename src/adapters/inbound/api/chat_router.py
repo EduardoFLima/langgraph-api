@@ -22,6 +22,9 @@ def receive_question(request: ChatRequest,
 
     response.set_cookie("thread_id", chat_response.get("thread_id"))
 
+    if chat_response["blocked"]:
+        response.status_code = 400
+
     return ChatResponse(
         messages=chat_response.get("messages") if show_history else None,
         answer=chat_response.get("answer"),
