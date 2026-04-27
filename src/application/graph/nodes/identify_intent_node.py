@@ -3,7 +3,7 @@ import json
 from src.application.graph.message_extractor import extract_prompt_from, extract_conversation_history
 from src.application.graph.state import Path
 from src.application.ports.outbound.model_client_port import ModelClientPort
-from src.application.prompts.identify_ident_prompt import IntentSchema, get_system_prompt, wrap_user_prompt
+from src.application.prompts.identify_intent_prompt import IntentSchema, get_system_prompt, wrap_user_prompt
 
 
 def identify_intent(model_client: ModelClientPort):
