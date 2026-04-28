@@ -14,6 +14,12 @@ class PostgresSettings(BaseModel):
         return f"postgresql://postgres:{self.postgres_password}@localhost:5432/{self.postgres_db}"
 
 
+class SafeguardSettings(BaseModel):
+
+    enabled: bool = True
+    model: str = "openai/gpt-oss-safeguard-20b"
+
+
 class Settings(BaseSettings):
     openrouter_api_key: str
     langsmith_api_key: str
@@ -23,7 +29,6 @@ class Settings(BaseSettings):
         "openai/gpt-oss-20b",
         "nvidia/nemotron-3-super-120b-a12b:free"
     ]
-    safeguard_model: str = "openai/gpt-oss-safeguard-20b"
 
     http_referer: str = "some.web.site"
     x_title: str = "Testing chat agent"
@@ -31,6 +36,7 @@ class Settings(BaseSettings):
     temperature: float = 0.2
 
     memory: PostgresSettings = PostgresSettings()
+    safeguard: SafeguardSettings = SafeguardSettings()
 
     # loading .env
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", env_nested_delimiter="__")

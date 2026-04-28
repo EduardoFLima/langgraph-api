@@ -18,7 +18,7 @@ class OpenAPIClient(ModelClientPort):
 
         self._client = self._instantiate_new_model(self._settings.models)
         self._safeguard_client = self._instantiate_new_model(
-            [self._settings.safeguard_model]
+            [self._settings.safeguard.model]
         )
 
     def _instantiate_new_model(self, models):
@@ -71,6 +71,8 @@ class OpenAPIClient(ModelClientPort):
         return None
 
     def safeguard_check(self, safeguard_prompt: str, response_format: type[T]) -> dict:
+        if self._is_safeguard_disabled():
+            return self._generate_disabled_response()
 
         print("\n🛡️...calling the safeguard agent...")
 
@@ -86,8 +88,15 @@ class OpenAPIClient(ModelClientPort):
 
         model = data.response_metadata["model_name"] if data.response_metadata else None
 
-        print(
-            f"\nℹ️ Got a response. The model used was {model}."
-        )
+        print(f"\nℹ️ Got a response. The model used was {model}.")
 
         return json.loads(data.text)
+
+    def _is_safeguard_disabled(self):
+        return not self._settings.safeguard.enabled
+
+    def _generate_disabled_response(self):
+        disabled_message = "Safeguard check is disabled"
+        print(f"\n⏭️...{disabled_message}...")
+
+        return {"security_status": "SAFE", "analysis": disabled_message}

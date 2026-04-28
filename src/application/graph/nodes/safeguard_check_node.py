@@ -26,7 +26,9 @@ def safeguard_check(model_client: ModelClientPort):
                     analysis=response["analysis"] if response.get("analysis") else None,
                 )
             }
-        except:
+        except Exception as e:
+            print("\n❌ Error:", e)
+            
             return {
                 "safeguard": Safeguard(
                     blocked=True,

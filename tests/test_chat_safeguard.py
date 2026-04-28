@@ -1,7 +1,16 @@
+from unittest.mock import patch
+
 import pytest
 from fastapi.testclient import TestClient
+from src.config import get_settings
 from src.main import app
 
+@pytest.fixture(autouse=True)
+def enable_safeguard():
+    get_settings.cache_clear()
+    with patch.dict("os.environ", {"SAFEGUARD__ENABLED": "true"}):
+        yield
+    get_settings.cache_clear()
 
 class TestChatPaths:
 
