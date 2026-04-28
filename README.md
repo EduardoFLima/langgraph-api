@@ -109,33 +109,45 @@ The graph is defined with `StateGraph(State)` and has this flow:
 ```mermaid
 flowchart TD
     START([START]) --> load_memory[load_memory]
-    load_memory --> identify_intent[identify_intent]
+    START --> safeguard_check[safeguard_check]
+
+    load_memory --> resolve_initial_checks[resolve_initial_checks]
+    safeguard_check --> resolve_initial_checks
+
+    resolve_initial_checks -->|safe| identify_intent[identify_intent]
+    resolve_initial_checks -->|unsafe| blocked[blocked]
 
     identify_intent -->|Path.PATH_A| path_a[path_a]
     identify_intent -->|Path.PATH_B| path_b[path_b]
-    identify_intent -->|fallback| unknown_path[unknown_path]
+    identify_intent -->|default| unknown_path[unknown_path]
 
     path_a --> summarize[summarize]
     path_b --> summarize
     unknown_path --> summarize
+    blocked --> summarize
 
     summarize --> END([END])
 ```
 
-1. `START -> load_memory`
-2. `load_memory -> identify_intent`
-3. Conditional branch from `identify_intent`:
+1. `START` triggers both `load_memory` and `safeguard_check`.
+2. Both nodes converge at `resolve_initial_checks`.
+3. Conditional branch from `resolve_initial_checks`:
+   - `safe -> identify_intent`
+   - `unsafe -> blocked`
+4. Conditional branch from `identify_intent`:
    - `path_a`
    - `path_b`
    - `unknown_path`
-4. All branches converge to `summarize`
-5. `summarize -> END`
+5. All terminal paths (`path_a`, `path_b`, `unknown_path`, `blocked`) converge to `summarize`.
+6. `summarize -> END`
 
 In practice, that means:
 
 - Memory is loaded first.
-- The request intent selects a route.
-- Route-specific behavior runs (`path_a`, `path_b`, or fallback).
+- A safeguard check runs in parallel with memory loading.
+- If blocked, the flow goes to `blocked` and then `summarize`.
+- If safe, request intent selects a route.
+- Route-specific behavior runs (`path_a`, `path_b`, or fallback `unknown_path`).
 - A final summarization step produces the response.
 
 The graph is compiled with a PostgreSQL-backed checkpointer/store (through the memory adapter), enabling state persistence across interactions.
