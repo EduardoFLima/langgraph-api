@@ -1,16 +1,19 @@
+import logging
 from datetime import datetime
 
 from langchain.messages import HumanMessage
 
 from src.application.ports.inbound.chat_use_case import ChatUseCase
 
+logger = logging.getLogger(__name__)
+
 
 def resolve_thread_id(thread_id: str) -> str:
     if thread_id is None:
         thread_id = str(datetime.now())
-        print("thread_id was null ❌, generated one 🔨", thread_id)
+        logger.info("thread_id was null ❌, generated one 🔨 %s", thread_id)
     else:
-        print("got an existing thread_id ✅", thread_id)
+        logger.info("got an existing thread_id ✅ %s", thread_id)
     return thread_id
 
 
@@ -20,7 +23,7 @@ class ChatService(ChatUseCase):
         self._graph = graph
 
     def chat(self, thread_id: str, question: str, user_id: str) -> dict:
-        print(f"\n\n===== received a message =====\nmessage:{question}\n")
+        logger.info("\n\n===== received a message =====\nmessage:%s\n", question)
 
         messages = [HumanMessage(question)]
 
@@ -45,9 +48,9 @@ class ChatService(ChatUseCase):
         preferred_path = result["preferred_path"].value if result.get("preferred_path") else None
         blocked = result["safeguard"].blocked if result.get("safeguard") else None
 
-        print("✅ The resulting path was:", path)
-        print("✅ The resulting preferred_path was:", preferred_path)
-        print("✅ The safeguard status was:", "blocked" if blocked else "not blocked")
+        logger.info("✅ The resulting path was: %s", path)
+        logger.info("✅ The resulting preferred_path was: %s", preferred_path)
+        logger.info("✅ The safeguard status was: %s", "blocked" if blocked else "not blocked")
 
         return {
             "messages": formatted_messages,
