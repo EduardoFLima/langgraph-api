@@ -12,13 +12,13 @@ router = APIRouter()
 
 
 @router.post("/chat", response_model=ChatResponse, response_model_exclude_none=True)
-def receive_question(request: ChatRequest,
+async def receive_question(request: ChatRequest,
                      response: Response,
                      service: ChatServiceDep,
                      user_id: Optional[str] = None,
                      show_history: Optional[bool] = None,
                      thread_id: str = Cookie(None)):
-    chat_response = service.chat(thread_id, request.prompt, user_id)
+    chat_response = await service.chat(thread_id, request.prompt, user_id)
 
     response.set_cookie("thread_id", chat_response.get("thread_id"))
 

@@ -27,3 +27,6 @@ dbdata
 
 # langchain dev environment
 .langgraph_api
+
+# generated reports
+reports

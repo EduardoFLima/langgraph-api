@@ -38,6 +38,8 @@ class Settings(BaseSettings):
     memory: PostgresSettings = PostgresSettings()
     safeguard: SafeguardSettings = SafeguardSettings()
 
+    reports_dir: str = "./reports"
+
     # loading .env
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", env_nested_delimiter="__")
 

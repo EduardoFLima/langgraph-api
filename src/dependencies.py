@@ -1,8 +1,10 @@
 from typing import Annotated
 
 from fastapi import Depends
+from langchain_core.tools import BaseTool
 from langgraph.graph.state import CompiledStateGraph
 
+from application.services.tools_service import get_all_mcp_tools
 from src.adapters.outbound.model_clients.open_api_client import OpenAPIClient
 from src.adapters.outbound.persistence.postgres_memory import PostgresMemory
 from src.application.graph.factory import build_graph
@@ -17,18 +19,24 @@ def get_model_client(settings=Depends(get_settings)) -> ModelClientPort:
     return OpenAPIClient(settings)
 
 
-def get_postgres_memory(settings=Depends(get_settings)) -> MemoryPort:
-    return PostgresMemory(settings.memory.db_uri)
+async def get_postgres_memory(settings=Depends(get_settings)) -> MemoryPort:
+    memory = PostgresMemory(settings.memory.db_uri)
+    await memory.start()
+    return memory
 
+async def get_mcp_tools(settings=Depends(get_settings)) -> list[BaseTool]:
+    return await get_all_mcp_tools(settings.reports_dir)
 
-def get_graph(
+async def get_graph(
+        settings=Depends(get_settings),
         model_client=Depends(get_model_client),
-        memory_saver=Depends(get_postgres_memory)
+        memory_saver=Depends(get_postgres_memory),
+        tools=Depends(get_mcp_tools)
 ) -> CompiledStateGraph:
-    return build_graph(model_client, memory_saver)
+    return build_graph(settings, model_client, memory_saver, tools)
 
 
-def get_chat_service(graph=Depends(get_graph)) -> ChatUseCase:
+async def get_chat_service(graph=Depends(get_graph)) -> ChatUseCase:
     return ChatService(graph)
 
 

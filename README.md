@@ -1,4 +1,3 @@
-# LangGraph API
 
 LangGraph API is a **template project** for building LangGraph-based applications with FastAPI.
 Use it as a reference implementation to bootstrap new projects with graph orchestration, clean architecture boundaries, and persistent memory out of the box.

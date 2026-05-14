@@ -1,6 +1,9 @@
 from langchain.messages import AIMessage
+from langchain_core.tools import BaseTool
 from langgraph.graph import END, START, StateGraph
 
+from config import Settings
+from src.application.graph.nodes.generate_report_node import generate_report
 from src.application.graph.nodes.identify_intent_node import identify_intent
 from src.application.graph.nodes.load_memory_node import load_memory
 from src.application.graph.nodes.safeguard_check_node import safeguard_check
@@ -31,7 +34,9 @@ def unknown_path(_):
 
 
 def blocked(_):
-    return {"messages": [AIMessage("Apologies but a security risk was detected in your last prompt, no path can be taken.")]}
+    return {"messages": [
+        AIMessage("Apologies but a security risk was detected in your last prompt, no path can be taken.")]}
+
 
 def initial_checks_condition(state: dict):
     blocked = state["safeguard"].blocked if state.get("safeguard") else False
@@ -53,7 +58,10 @@ def path_condition(state: dict):
             return "unknown_path"
 
 
-def get_graph_definition(model_client: ModelClientPort, memory_saver: MemoryPort):
+def get_graph_definition(settings: Settings,
+                         model_client: ModelClientPort,
+                         memory_saver: MemoryPort,
+                         tools: list[BaseTool]):
     agent_builder = StateGraph(State)
 
     agent_builder.add_node("load_memory", load_memory)
@@ -63,6 +71,7 @@ def get_graph_definition(model_client: ModelClientPort, memory_saver: MemoryPort
     agent_builder.add_node("path_a", path_a)
     agent_builder.add_node("path_b", path_b)
     agent_builder.add_node("unknown_path", unknown_path)
+    agent_builder.add_node("report", generate_report(settings, model_client, tools))
     agent_builder.add_node("blocked", blocked)
     agent_builder.add_node("summarize", summarize(model_client))
 
@@ -84,9 +93,10 @@ def get_graph_definition(model_client: ModelClientPort, memory_saver: MemoryPort
         path_condition,
         {"path_a": "path_a", "path_b": "path_b", "unknown_path": "unknown_path"},
     )
-    agent_builder.add_edge("path_a", "summarize")
-    agent_builder.add_edge("path_b", "summarize")
-    agent_builder.add_edge("unknown_path", "summarize")
+    agent_builder.add_edge("path_a", "report")
+    agent_builder.add_edge("path_b", "report")
+    agent_builder.add_edge("unknown_path", "report")
+    agent_builder.add_edge("report", "summarize")
     agent_builder.add_edge("blocked", "summarize")
     agent_builder.add_edge("summarize", END)
 

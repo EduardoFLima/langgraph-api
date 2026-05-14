@@ -4,6 +4,7 @@ from typing import TypeVar
 
 from langchain.agents import create_agent
 from langchain.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.tools import BaseTool
 from langchain_openai import ChatOpenAI
 
 from src.application.ports.outbound.model_client_port import ModelClientPort
@@ -67,6 +68,31 @@ class OpenAPIClient(ModelClientPort):
 
             if structured_response is not None:
                 return structured_response
+
+        except Exception as e:
+            answer = "An error occurred when calling the llm provider"
+            logger.error("%s: %s", answer, e)
+
+        return None
+
+    async def send_prompt_with_tools(
+            self, system_prompt: str, user_prompt: str, tools: list[BaseTool] = None
+    ) -> T:
+        agent = create_agent(
+            model=self._client, tools=tools
+        )
+
+        logger.info("\n⌛...calling the agent...")
+
+        try:
+            data = await agent.ainvoke(
+                {"messages": [SystemMessage(system_prompt), HumanMessage(user_prompt)]}
+            )
+
+            if data is not None:
+                return data
+
+            raise Exception("No data returned from the agent")
 
         except Exception as e:
             answer = "An error occurred when calling the llm provider"

@@ -15,10 +15,10 @@ class MemoryPort(ABC):
         raise NotImplementedError("get_store not implemented!")
 
     @abstractmethod
-    def start(self):
-        raise NotImplementedError("get_checkpointer not implemented!")
+    async def start(self):
+        raise NotImplementedError("start not implemented!")
 
     @abstractmethod
-    def stop(self):
-        raise NotImplementedError("get_checkpointer not implemented!")
+    async def stop(self):
+        raise NotImplementedError("stop not implemented!")
 
