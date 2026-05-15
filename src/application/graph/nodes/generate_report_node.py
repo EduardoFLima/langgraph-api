@@ -1,5 +1,3 @@
-import json
-
 from langchain_core.tools import BaseTool
 from langgraph.runtime import Runtime
 
@@ -17,7 +15,7 @@ def generate_report(settings: Settings, model_client: ModelClientPort, tools: li
         conversation_history = extract_conversation_history(state.get("messages"))
         user_prompt = get_user_prompt(conversation_history)
 
-        response = await model_client.send_prompt_with_tools(system_prompt, user_prompt, tools)
+        await model_client.send_prompt_with_tools(system_prompt, user_prompt, tools)
 
         return state
 

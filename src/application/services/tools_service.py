@@ -6,6 +6,7 @@ from langchain_mcp_adapters.client import MultiServerMCPClient
 from mcp.types import LoggingMessageNotificationParams
 
 from application.tools.fs_tool import get_fs_tool
+from application.tools.get_path_history_tool import get_path_history
 
 logger = logging.getLogger(__name__)
 
@@ -31,4 +32,4 @@ async def get_all_mcp_tools(reports_dir) -> list[BaseTool]:
 
     tools = await client.get_tools()
 
-    return tools
+    return tools + [get_path_history]

@@ -59,8 +59,9 @@ class TestChatPersistence:
         send_message_to_chat(client, user_id, "take the path a!")
         send_message_to_chat(client, user_id, "take the path a!")
         send_message_to_chat(client, user_id, "take the path b!")
-        send_message_to_chat(client, user_id, "take the path b!")
+        send_message_to_chat(client, user_id, "hmm not sure what to do..")
         send_message_to_chat(client, user_id, "take the path a!")
+        send_message_to_chat(client, user_id, "take the path b!")
 
         files_after = collect_report_files(reports_dir)
 

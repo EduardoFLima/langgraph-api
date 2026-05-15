@@ -2,6 +2,7 @@ from langchain.messages import AIMessage
 from langchain_core.tools import BaseTool
 from langgraph.graph import END, START, StateGraph
 
+from application.graph.nodes.paths_nodes import path_a, path_b, unknown_path
 from config import Settings
 from src.application.graph.nodes.generate_report_node import generate_report
 from src.application.graph.nodes.identify_intent_node import identify_intent
@@ -15,23 +16,6 @@ from src.application.ports.outbound.model_client_port import ModelClientPort
 
 def resolve_initial_checks(state):
     return state
-
-
-def path_a(_):
-    return {"messages": [AIMessage("You will take the path_a !")]}
-
-
-def path_b(_):
-    return {"messages": [AIMessage("You will take the path_b !")]}
-
-
-def unknown_path(_):
-    return {
-        "messages": [
-            AIMessage("Apologies. Couldn't understand the path you want to take.")
-        ]
-    }
-
 
 def blocked(_):
     return {"messages": [

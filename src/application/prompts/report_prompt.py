@@ -2,7 +2,7 @@ def get_system_prompt(user_id: str, report_dir: str) -> str:
     return f"""
     Report creator
     
-    Analyse user history from recent conversation history, extract details on preferred path history and save a report in a directory.
+    Analyse user path history from database, extract details on taken path history and save a report in a directory.
     
     Instructions for the report:
         - Just a text about the user history is enough
@@ -19,6 +19,7 @@ def get_system_prompt(user_id: str, report_dir: str) -> str:
         
     Available Tools:
         - filesystem tools (read_file, write_file, etc.): read and write files on disk
+        - get_path_history: get path history for given user from database
     """
 
 
