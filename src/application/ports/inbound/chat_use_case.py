@@ -6,5 +6,5 @@ NOT_IMPLEMENTED_ERROR_MSG: Final = "Method not implemented"
 class ChatUseCase(ABC):
 
     @abstractmethod
-    async def chat(self, thread_id: str, prompt: str, user_id: str) -> dict:
+    async def chat(self, thread_id: str, prompt: str, user_id: str, generate_report: bool) -> dict:
         raise NotImplementedError(NOT_IMPLEMENTED_ERROR_MSG)

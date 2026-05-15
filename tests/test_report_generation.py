@@ -8,8 +8,8 @@ from src.config import get_settings
 from src.main import app
 
 
-def send_message_to_chat(client: TestClient, user_id, message: str) -> Response:
-    response = client.post(f"/chat?user_id={user_id}&show_history=true", json={"prompt": message})
+def send_message_to_chat(client: TestClient, user_id, message: str, generate_report: bool) -> Response:
+    response = client.post(f"/chat?user_id={user_id}&generate_report={generate_report}&", json={"prompt": message})
 
     assert response.status_code == 200
     assert response.json() is not None
@@ -56,12 +56,15 @@ class TestChatPersistence:
         clear_files(reports_dir, user_id)
         old_files = collect_report_files(reports_dir)
 
-        send_message_to_chat(client, user_id, "take the path a!")
-        send_message_to_chat(client, user_id, "take the path a!")
-        send_message_to_chat(client, user_id, "take the path b!")
-        send_message_to_chat(client, user_id, "hmm not sure what to do..")
-        send_message_to_chat(client, user_id, "take the path a!")
-        send_message_to_chat(client, user_id, "take the path b!")
+        should_generate_report = False
+        send_message_to_chat(client, user_id, "take the path a!", should_generate_report)
+        send_message_to_chat(client, user_id, "take the path a!", should_generate_report)
+        send_message_to_chat(client, user_id, "take the path b!", should_generate_report)
+        send_message_to_chat(client, user_id, "hmm not sure what to do..", should_generate_report)
+        send_message_to_chat(client, user_id, "take the path a!", should_generate_report)
+
+        should_generate_report = True
+        send_message_to_chat(client, user_id, "take the path b!", should_generate_report)
 
         files_after = collect_report_files(reports_dir)
 

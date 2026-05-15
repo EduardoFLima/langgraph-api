@@ -9,6 +9,11 @@ from src.application.prompts.report_prompt import get_system_prompt, get_user_pr
 
 def generate_report(settings: Settings, model_client: ModelClientPort, tools: list[BaseTool]):
     async def generate_report_node(state: dict, runtime: Runtime):
+        should_generate_report = runtime.context["should_generate_report"] if "should_generate_report" in runtime.context else None
+
+        if not should_generate_report:
+            return state
+
         user_id = runtime.context["user_id"] if "user_id" in runtime.context else None
         system_prompt = get_system_prompt(user_id, settings.reports_dir)
 

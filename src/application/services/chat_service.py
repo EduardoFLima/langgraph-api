@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime
-from typing import Coroutine
 
 from langchain.messages import HumanMessage
 
@@ -23,7 +22,7 @@ class ChatService(ChatUseCase):
     def __init__(self, graph):
         self._graph = graph
 
-    async def chat(self, thread_id: str, question: str, user_id: str) -> dict:
+    async def chat(self, thread_id: str, question: str, user_id: str, generate_report: bool) -> dict:
         logger.info("\n\n===== received a message =====\nmessage:%s\n", question)
 
         messages = [HumanMessage(question)]
@@ -37,7 +36,10 @@ class ChatService(ChatUseCase):
                     "thread_id": thread_id
                 },
             },
-            context={"user_id": user_id}
+            context={
+                "user_id": user_id,
+                "should_generate_report": generate_report,
+            }
         )
 
         formatted_messages: list[str] = [

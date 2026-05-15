@@ -17,8 +17,9 @@ async def receive_question(request: ChatRequest,
                      service: ChatServiceDep,
                      user_id: Optional[str] = None,
                      show_history: Optional[bool] = None,
+                     generate_report: Optional[bool] = False,
                      thread_id: str = Cookie(None)):
-    chat_response = await service.chat(thread_id, request.prompt, user_id)
+    chat_response = await service.chat(thread_id, request.prompt, user_id, generate_report)
 
     response.set_cookie("thread_id", chat_response.get("thread_id"))
 
