@@ -136,28 +136,13 @@ flowchart TD
     summarize --> END([END])
 ```
 
-1. `START` triggers both `load_memory` and `safeguard_check` in parallel.
-2. Both nodes converge at `resolve_initial_checks`.
-3. Conditional branch from `resolve_initial_checks`:
-   - `safe -> identify_intent`
-   - `unsafe -> blocked`
-4. Conditional branch from `identify_intent`:
-   - `path_a`
-   - `path_b`
-   - `unknown_path`
-5. Each path node (`path_a`, `path_b`, or `unknown_path`) **persists the chosen path** to the path-history database.
-6. All path nodes converge on the `report` node, which optionally generates a report via MCP tools.
-7. `blocked` skips the `report` node and goes directly to `summarize`.
-8. summarize -> END`.
-
 In practice, that means:
 
-- Memory is loaded first.
-- A safeguard check runs in parallel with memory loading.
+- Memory is loaded and a safeguard check runs in parallel.
 - If blocked, the flow goes to `blocked` and then `summarize`.
 - If safe, request intent selects a route.
-- Route-specific behavior runs (`path_a`, `path_b`, or fallback `unknown_path`), and the path is saved.
-- A report is optionally generated (see [Report generation](#report-generation)).
+- Route-specific behavior runs (`path_a`, `path_b`, or fallback `unknown_path`), and the path history is saved.
+- A report is optionally generated (see [Report generation](#report-generation)) using MCP tools.
 - A final summarization step produces the response.
 
 The graph is compiled with a PostgreSQL-backed checkpointer/store (through the memory adapter), enabling state persistence across interactions.
