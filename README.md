@@ -155,7 +155,7 @@ Two tools are available during report generation:
 
 | Tool | Source | Description |
 |------|--------|-------------|
-| `filesystem` tools (`read_file`, `write_file`, …) | `@modelcontextprotocol/server-filesystem` (stdio) | Read and write files inside the `reports_dir` directory |
+| `filesystem` tools | `@modelcontextprotocol/server-filesystem` (stdio) | Read and write files inside the `reports_dir` directory |
 | `get_path_history` | Custom LangChain tool (`src/application/tools/get_path_history_tool.py`) | Fetch the path history for the current user from the database |
 
 MCP tools are gathered at request time in `src/application/services/tools_service.py` and injected into the graph via dependency injection.
