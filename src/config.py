@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     temperature: float = 0.2
 
     memory: PostgresSettings = PostgresSettings()
+    path_history: PostgresSettings = PostgresSettings()
     safeguard: SafeguardSettings = SafeguardSettings()
 
     reports_dir: str = "./reports"

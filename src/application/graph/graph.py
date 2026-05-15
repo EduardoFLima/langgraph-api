@@ -12,6 +12,7 @@ from src.application.graph.nodes.summarize_node import summarize
 from src.application.graph.state import State, Path
 from src.application.ports.outbound.memory_port import MemoryPort
 from src.application.ports.outbound.model_client_port import ModelClientPort
+from src.application.ports.outbound.path_history_port import PathHistoryPort
 
 
 def resolve_initial_checks(state):
@@ -45,6 +46,7 @@ def path_condition(state: dict):
 def get_graph_definition(settings: Settings,
                          model_client: ModelClientPort,
                          memory_saver: MemoryPort,
+                         path_history_repo: PathHistoryPort,
                          tools: list[BaseTool]):
     agent_builder = StateGraph(State)
 
@@ -52,9 +54,9 @@ def get_graph_definition(settings: Settings,
     agent_builder.add_node("safeguard_check", safeguard_check(model_client))
     agent_builder.add_node("resolve_initial_checks", resolve_initial_checks)
     agent_builder.add_node("identify_intent", identify_intent(model_client))
-    agent_builder.add_node("path_a", path_a)
-    agent_builder.add_node("path_b", path_b)
-    agent_builder.add_node("unknown_path", unknown_path)
+    agent_builder.add_node("path_a", path_a(path_history_repo))
+    agent_builder.add_node("path_b", path_b(path_history_repo))
+    agent_builder.add_node("unknown_path", unknown_path(path_history_repo))
     agent_builder.add_node("report", generate_report(settings, model_client, tools))
     agent_builder.add_node("blocked", blocked)
     agent_builder.add_node("summarize", summarize(model_client))
