@@ -1,10 +1,10 @@
 from langchain_core.tools import BaseTool
 from langgraph.runtime import Runtime
 
-from config import Settings
 from src.application.graph.message_extractor import extract_conversation_history
 from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.application.prompts.report_prompt import get_system_prompt, get_user_prompt
+from src.config import Settings
 
 
 def generate_report(settings: Settings, model_client: ModelClientPort, tools: list[BaseTool]):

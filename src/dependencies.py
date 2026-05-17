@@ -4,7 +4,6 @@ from fastapi import Depends
 from langchain_core.tools import BaseTool
 from langgraph.graph.state import CompiledStateGraph
 
-from application.services.tools_service import get_all_mcp_tools
 from src.adapters.outbound.model_clients.open_api_client import OpenAPIClient
 from src.adapters.outbound.persistence.path_history_repository import PathHistoryRepository
 from src.adapters.outbound.persistence.postgres_memory import PostgresMemory
@@ -14,6 +13,7 @@ from src.application.ports.outbound.memory_port import MemoryPort
 from src.application.ports.outbound.model_client_port import ModelClientPort
 from src.application.ports.outbound.path_history_port import PathHistoryPort
 from src.application.services.chat_service import ChatService
+from src.application.services.tools_service import get_all_mcp_tools
 from src.config import get_settings
 
 
