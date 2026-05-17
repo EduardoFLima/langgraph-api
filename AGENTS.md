@@ -2,13 +2,16 @@
 
 ## Big Picture (Read This First)
 - `src/main.py` boots FastAPI and mounts only one business router: `src/adapters/inbound/api/chat_router.py` (`POST /chat`).
+- `src/main.py` also exposes a cheap smoke endpoint: `GET /health`.
 - `/chat` delegates to `ChatService` (`src/application/services/chat_service.py`), which invokes a compiled LangGraph with:
   - `config.configurable.thread_id` (conversation checkpoint key)
   - `runtime.context.user_id` and `runtime.context.should_generate_report`
+- `/chat` supports request-time controls via query/cookie: `user_id`, `show_history`, `generate_report`, and `thread_id` cookie (`chat_router.py`).
 - Graph assembly lives in `src/application/graph/graph.py` and is wired through DI in `src/dependencies.py`.
 
 ## Graph/Data Flow You Must Preserve
 - Current flow: `START -> (load_memory + safeguard_check) -> resolve_initial_checks -> identify_intent -> path_* -> report -> summarize -> END`.
+- Graph node id is `report`, but the node factory is `generate_report(...)` (`src/application/graph/nodes/generate_report_node.py`).
 - Unsafe prompts branch to `blocked` then `summarize`; API maps blocked responses to HTTP 400 (`src/adapters/inbound/api/chat_router.py`).
 - Path decisions use `Path` enum in `src/application/graph/state.py`; returning raw strings instead of enum values will break conditional routing.
 - `summarize` trims memory to last 6 messages using `RemoveMessage(REMOVE_ALL_MESSAGES)` (`src/application/graph/nodes/summarize_node.py`).
@@ -19,6 +22,7 @@
   - `src/adapters/*`: concrete integrations (OpenRouter, Postgres, HTTP)
   - `src/application/graph/nodes/*`: orchestration nodes
 - Node factories commonly return closures with injected dependencies (example: `path_a(path_history_repo)`, `identify_intent(model_client)`).
+- Runtime context access is defensive in nodes/tools (`if "user_id" in runtime.context`), so new context keys should follow the same pattern (`generate_report_node.py`, `paths_nodes.py`, `get_path_history_tool.py`).
 - Prompt logic is schema-first: prompt module defines both Pydantic schema + prompt builder (see `identify_intent_prompt.py`, `summarize_prompt.py`, `guardrails_prompt.py`).
 - Import style: start from `src` directory
 
@@ -42,6 +46,7 @@
 - Most chat tests are integration-like (real graph + DB), so bring up Postgres first:
   - `docker compose up -d`
   - `pytest -q` (or `pytest -vs` for graph logs)
+- Local API run command in repo docs: `uvicorn src.main:app --reload` (after `pip install -r requirements.txt`).
 - Health smoke test is cheap: `GET /health`.
 - LangGraph CLI config exists in `langgraph.json` with graph id `agent` and entrypoint `langgraph_dev/graph_entry.py` (uses `MockMemory`).
 
@@ -49,4 +54,5 @@
 - When adding graph behavior, update both routing logic and tests under `tests/test_chat_*.py` that assert path/safeguard/summary behavior.
 - If you introduce new runtime context keys, thread them through `ChatService.chat(...)` and consume from node `runtime.context`.
 - Keep report-writing constrained to `reports_dir` semantics used by `fs_tool.py` and `report_prompt.py`.
+- Keep `langgraph_dev/graph_entry.py` compatibility in mind: it builds the graph with `path_history_repo=None` and `tools=[]`, so changes that assume those are always present can break `langgraph dev` flows.
 

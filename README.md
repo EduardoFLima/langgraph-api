@@ -141,7 +141,7 @@ In practice, that means:
 - Memory is loaded and a safeguard check runs in parallel.
 - If blocked, the flow goes to `blocked` and then `summarize`.
 - If safe, request intent selects a route.
-- Route-specific behavior runs (`path_a`, `path_b`, or fallback `unknown_path`), and the path history is saved.
+- Route-specific behavior runs (`path_a`, `path_b`, or fallback `unknown_path`); path history is saved only when `user_id` is provided in the `/chat` request.
 - A report is optionally generated (see [Report generation](#report-generation)) using MCP tools.
 - A final summarization step produces the response.
 

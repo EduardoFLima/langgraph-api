@@ -30,4 +30,6 @@ def unknown_path(path_history_repo: PathHistoryPort):
 
 def save_history(state, runtime, path_history_repo: PathHistoryPort):
     user_id = runtime.context["user_id"] if "user_id" in runtime.context else None
-    path_history_repo.store_path_to_history(user_id, state["path"].value)
+
+    if user_id:
+        path_history_repo.store_path_to_history(user_id, state["path"].value)
